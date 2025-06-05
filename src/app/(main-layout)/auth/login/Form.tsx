@@ -1,12 +1,15 @@
 "use client"
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { handleLogin } from "./action";
+import { useRouter } from "next/navigation";
 
 export type FormState = {
     message: string;
     success: boolean;
-    data?: unknown;
+    data?: {
+        [key: string]: string;
+    };
 }
 
 const initialState: FormState = {
@@ -16,6 +19,17 @@ const initialState: FormState = {
 
 export default function Form() {
     const [state, formActionState, isPending] = useActionState(handleLogin, initialState);
+
+    const router = useRouter();
+    useEffect(() => {
+        if (state.success) {
+            const user = state.data.user;
+            if (user.role == "admin") {
+                return router.push(`/admin`);
+            }
+            router.push(`/`);
+        }
+    }, [state, router]);
 
     return (
         <div>
