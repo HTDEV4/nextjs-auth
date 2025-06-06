@@ -1,6 +1,16 @@
+import { getUser } from "@/app/utils/auth";
 import Form from "./Form";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+    const user = await getUser();
+    if (user) {
+        const role = user.role;
+        if (role === "admin") {
+            return redirect("/admin")
+        }
+        return redirect("/")
+    }
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
